@@ -55,9 +55,20 @@ class DrinkMenuDB {
   }
 
   Future<void> updateData(DrinkMenuItem drink) async {
-    final db = await database;
-    await db.update('drinkmenu', drink.toMap(), where: 'keyID = ?', whereArgs: [drink.keyID]);
+    try {
+      final db = await database;
+      await db.update(
+        'drinkmenu',
+        drink.toMap(),
+        where: 'keyID = ?',
+        whereArgs: [drink.keyID],
+      );
+      print('Drink updated successfully');
+    } catch (e) {
+      print('Error updating drink: $e');
+    }
   }
+
 
   Future<void> deleteData(DrinkMenuItem drink) async {
     final db = await database;

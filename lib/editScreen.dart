@@ -67,9 +67,10 @@ class _EditScreenState extends State<EditScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
+                    // อัปเดตข้อมูลในฐานข้อมูลและรีเฟรชข้อมูลใน provider
                     Provider.of<DrinkMenuProvider>(context, listen: false).updateDrink(
                       DrinkMenuItem(
-                        keyID: widget.drink.keyID, // ✅ เปลี่ยนจาก widget.item เป็น widget.drink
+                        keyID: widget.drink.keyID,
                         drinkName: _drinkName,
                         price: _price,
                         category: _category,
@@ -77,7 +78,7 @@ class _EditScreenState extends State<EditScreen> {
                         description: _description,
                       ),
                     );
-                    Navigator.pop(context);
+                    Navigator.pop(context); // ปิดหน้าจอหลังจากบันทึก
                   }
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
