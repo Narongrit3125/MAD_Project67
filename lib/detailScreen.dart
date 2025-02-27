@@ -16,70 +16,43 @@ class DetailScreen extends StatelessWidget {
         backgroundColor: Colors.brown,
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
+            icon: const Icon(Icons.edit),
             onPressed: () {
-              // ไปหน้าแก้ไข EditScreen
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => EditScreen(item: item),
-                ),
+                MaterialPageRoute(builder: (context) => EditScreen(drink: item)), // ✅ ส่งพารามิเตอร์ให้ถูกต้อง
               );
             },
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // แสดงรูปภาพ
-            Center(
-              child: item.imageUrl != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
-                        File(item.imageUrl!),
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.brown[200],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(Icons.local_cafe, size: 80, color: Colors.white),
-                    ),
-            ),
+            item.imageUrl != null
+                ? Image.file(File(item.imageUrl!), width: double.infinity, height: 200, fit: BoxFit.cover)
+                : Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.brown[200],
+                    child: const Icon(Icons.local_cafe, color: Colors.white, size: 100),
+                  ),
             const SizedBox(height: 16),
-
-            // แสดงชื่อเครื่องดื่ม
             Text(
               item.drinkName,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-
-            // แสดงราคา
             Text(
-              'ราคา: ฿${item.price}',
-              style: const TextStyle(fontSize: 20, color: Colors.brown),
+              'ราคา: ฿${item.price.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
-
-            // แสดงหมวดหมู่
-            if (item.category.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  'หมวดหมู่: ${item.category}',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ),
+            const SizedBox(height: 10),
+            Text(
+              'หมวดหมู่: ${item.category}',
+              style: const TextStyle(fontSize: 18),
+            ),
           ],
         ),
       ),

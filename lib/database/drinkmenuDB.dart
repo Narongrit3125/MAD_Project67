@@ -5,6 +5,7 @@ import 'package:account/model/drinkmenuItem.dart';
 class DrinkMenuDB {
   final String dbName;
   Database? _database;
+  final int dbVersion = 2; // ✅ เพิ่ม version 2 เพื่อรองรับ description
 
   DrinkMenuDB({required this.dbName});
 
@@ -20,7 +21,7 @@ class DrinkMenuDB {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: dbVersion, // ✅ อัปเดตเวอร์ชัน
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE drinkmenu (
@@ -29,9 +30,15 @@ class DrinkMenuDB {
             price REAL NOT NULL,
             category TEXT NOT NULL,
             dateAdded TEXT,
-            imageUrl TEXT
+            imageUrl TEXT,
+            description TEXT  -- ✅ เพิ่มฟิลด์ใหม่
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute("ALTER TABLE drinkmenu ADD COLUMN description TEXT;");
+        }
       },
     );
   }
@@ -44,29 +51,17 @@ class DrinkMenuDB {
   Future<List<DrinkMenuItem>> loadAllData() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('drinkmenu');
-
-    return List.generate(maps.length, (i) {
-      return DrinkMenuItem.fromMap(maps[i]);
-    });
+    return List.generate(maps.length, (i) => DrinkMenuItem.fromMap(maps[i]));
   }
 
   Future<void> updateData(DrinkMenuItem drink) async {
     final db = await database;
-    await db.update(
-      'drinkmenu',
-      drink.toMap(),
-      where: 'keyID = ?',
-      whereArgs: [drink.keyID],
-    );
+    await db.update('drinkmenu', drink.toMap(), where: 'keyID = ?', whereArgs: [drink.keyID]);
   }
 
   Future<void> deleteData(DrinkMenuItem drink) async {
     final db = await database;
-    await db.delete(
-      'drinkmenu',
-      where: 'keyID = ?',
-      whereArgs: [drink.keyID],
-    );
+    await db.delete('drinkmenu', where: 'keyID = ?', whereArgs: [drink.keyID]);
   }
 
   Future<void> clearDatabase() async {
