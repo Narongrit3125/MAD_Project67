@@ -5,7 +5,7 @@ import 'package:account/model/drinkmenuItem.dart';
 class DrinkMenuDB {
   final String dbName;
   Database? _database;
-  final int dbVersion = 2; // ✅ เพิ่ม version 2 เพื่อรองรับ description
+  final int dbVersion = 2;
 
   DrinkMenuDB({required this.dbName});
 
@@ -21,7 +21,7 @@ class DrinkMenuDB {
 
     return await openDatabase(
       path,
-      version: dbVersion, // ✅ อัปเดตเวอร์ชัน
+      version: dbVersion,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE drinkmenu (
@@ -31,7 +31,7 @@ class DrinkMenuDB {
             category TEXT NOT NULL,
             dateAdded TEXT,
             imageUrl TEXT,
-            description TEXT  -- ✅ เพิ่มฟิลด์ใหม่
+            description TEXT
           )
         ''');
       },
@@ -43,6 +43,13 @@ class DrinkMenuDB {
     );
   }
 
+  Future<void> resetDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, dbName);
+    await deleteDatabase(path);
+    print("Database deleted. Restart the app.");
+  }
+
   Future<void> insertDatabase(DrinkMenuItem drink) async {
     final db = await database;
     await db.insert('drinkmenu', drink.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
@@ -51,24 +58,21 @@ class DrinkMenuDB {
   Future<List<DrinkMenuItem>> loadAllData() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('drinkmenu');
+
+    print("Loaded ${maps.length} items from database.");
+
     return List.generate(maps.length, (i) => DrinkMenuItem.fromMap(maps[i]));
   }
 
   Future<void> updateData(DrinkMenuItem drink) async {
-    try {
-      final db = await database;
-      await db.update(
-        'drinkmenu',
-        drink.toMap(),
-        where: 'keyID = ?',
-        whereArgs: [drink.keyID],
-      );
-      print('Drink updated successfully');
-    } catch (e) {
-      print('Error updating drink: $e');
-    }
+    final db = await database;
+    await db.update(
+      'drinkmenu',
+      drink.toMap(),
+      where: 'keyID = ?',
+      whereArgs: [drink.keyID],
+    );
   }
-
 
   Future<void> deleteData(DrinkMenuItem drink) async {
     final db = await database;
