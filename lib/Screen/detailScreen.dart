@@ -14,45 +14,90 @@ class DetailScreen extends StatelessWidget {
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(title: Text(drinkItem.drinkName)),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF6F4E37), // สีน้ำตาลกาแฟ
+        title: Text(
+          drinkItem.drinkName,
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      ),
+      backgroundColor: Color(0xFFF5EFE6), // สีพื้นหลังโทนอุ่น
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // แสดงรูปภาพเครื่องดื่ม
             Center(
-              child: drinkItem.imageUrl != null && drinkItem.imageUrl!.isNotEmpty
-                  ? Image.file(
-                File(drinkItem.imageUrl!),
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              )
-                  : Icon(Icons.local_drink, size: 100, color: Colors.blue),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: drinkItem.imageUrl != null && drinkItem.imageUrl!.isNotEmpty
+                    ? Image.file(
+                  File(drinkItem.imageUrl!),
+                  width: double.infinity,
+                  height: 250,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image, size: 80, color: Colors.red);
+                  },
+                )
+                    : Icon(Icons.local_drink, size: 100, color: Colors.brown),
+              ),
+            ),
+            SizedBox(height: 20),
+
+            // ชื่อเครื่องดื่ม
+            Text(
+              drinkItem.drinkName,
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.brown[800]),
+            ),
+            SizedBox(height: 8),
+
+            // หมวดหมู่
+            Text(
+              'Category: ${drinkItem.category}',
+              style: TextStyle(fontSize: 18, color: Colors.brown[600]),
+            ),
+            SizedBox(height: 8),
+
+            // ราคา
+            Text(
+              'Price: \$${drinkItem.price.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700]),
             ),
             SizedBox(height: 16),
-            Text(drinkItem.drinkName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Category: ${drinkItem.category}', style: TextStyle(fontSize: 18, color: Colors.grey[700])),
-            SizedBox(height: 8),
-            Text('Price: \$${drinkItem.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 18, color: Colors.green)),
-            SizedBox(height: 16),
-            Text('Description:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+
+            // คำอธิบาย
+            Text(
+              'Description:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.brown[800]),
+            ),
             SizedBox(height: 4),
-            Text(drinkItem.description.isNotEmpty ? drinkItem.description : "No description available.",
-                style: TextStyle(fontSize: 16)),
+            Text(
+              drinkItem.description.isNotEmpty ? drinkItem.description : "No description available.",
+              style: TextStyle(fontSize: 16, color: Colors.brown[700]),
+            ),
+
             Spacer(),
+
+            // ปุ่มเพิ่มลงตะกร้า
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  orderProvider.addOrder(drinkItem); // เพิ่มสินค้าเข้าตะกร้า
-                  _showAddedToCartPopup(context); // แสดง Popup แจ้งเตือน
+                  orderProvider.addOrder(drinkItem);
+                  _showAddedToCartPopup(context);
                 },
-                icon: Icon(Icons.add_shopping_cart),
-                label: Text("เพิ่มลงตะกร้า"),
+                icon: Icon(Icons.add_shopping_cart, color: Colors.white),
+                label: Text(
+                  "เพิ่มลงตะกร้า",
+                  style: TextStyle(fontSize: 18, color: Color(0xFFFFF8E1)), // เปลี่ยนเป็นสีขาวนวล
+                ),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  textStyle: TextStyle(fontSize: 18),
+                  backgroundColor: Color(0xFF6F4E37), // สีน้ำตาลเข้ม
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -62,7 +107,7 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  // ✅ ฟังก์ชันแสดง Popup แจ้งเตือนเมื่อเพิ่มสินค้าลงตะกร้า
+  // ฟังก์ชันแสดง Popup แจ้งเตือน
   void _showAddedToCartPopup(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

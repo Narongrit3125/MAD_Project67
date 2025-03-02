@@ -30,10 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Drink Menu', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Color(0xFF6F4E37), // สีน้ำตาลเข้มเหมือนเมล็ดกาแฟ
+        title: Text(
+          'Drink Menu',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 22),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.add, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
@@ -44,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Stack(
             children: [
               IconButton(
-                icon: Icon(Icons.shopping_cart),
+                icon: Icon(Icons.shopping_cart, color: Colors.white),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -69,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      backgroundColor: Color(0xFFF5EFE6), // พื้นหลังสีครีม
       body: FutureBuilder(
         future: _loadData,
         builder: (context, snapshot) {
@@ -79,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Center(
               child: Text(
                 "ไม่มีสินค้าในเมนู",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
               ),
             );
           }
@@ -102,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
                 child: Card(
+                  color: Colors.white,
                   elevation: 5,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   child: Column(
@@ -111,20 +117,30 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                           child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                              ? Image.file(File(item.imageUrl!), width: double.infinity, fit: BoxFit.cover)
-                              : Icon(Icons.local_drink, size: 50, color: Colors.blue),
+                              ? Image.file(
+                            File(item.imageUrl!),
+                            width: double.infinity,
+                            height: 150,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.broken_image, size: 50, color: Colors.red);
+                            },
+                          )
+                              : Icon(Icons.local_drink, size: 50, color: Colors.brown),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            Text(item.drinkName,
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                              item.drinkName,
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
+                            ),
                             SizedBox(height: 4),
                             Text(
-                              '\$${item.price.toStringAsFixed(2)} - ${item.category}',
-                              style: TextStyle(color: Colors.grey[700]),
+                              '฿${item.price.toStringAsFixed(2)} - ${item.category}',
+                              style: TextStyle(color: Colors.brown[700]),
                             ),
                           ],
                         ),
@@ -133,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue),
+                            icon: Icon(Icons.edit, color: Colors.green),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -166,12 +182,14 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("ยืนยันการลบ"),
-          content: Text("คุณต้องการลบ '${item.drinkName}' ออกจากเมนูหรือไม่?"),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          backgroundColor: Colors.white,
+          title: Text("ยืนยันการลบ", style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold)),
+          content: Text("คุณต้องการลบ '${item.drinkName}' ออกจากเมนูหรือไม่?", style: TextStyle(color: Colors.brown[700])),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(), // ยกเลิก
-              child: Text("ยกเลิก"),
+              child: Text("ยกเลิก", style: TextStyle(color: Colors.green)),
             ),
             TextButton(
               onPressed: () {
